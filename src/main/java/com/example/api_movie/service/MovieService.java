@@ -19,6 +19,43 @@ public class MovieService {
         return movieRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    public MovieDto addMovie(MovieDto movieDto) {
+        Movie movie = new Movie();
+        movie.setTitle(movieDto.getTitle());
+        movie.setReleaseDate(movieDto.getReleaseDate());
+        movie.setDuration(movieDto.getDuration());
+        movie.setGenre(movieDto.getGenre());
+        movie.setLimitAge(movieDto.getLimitAge());
+        movie.setPoster(movieDto.getPoster());
+        movie.setRating(movieDto.getRating());
+        movie.setFilmDirector(movieDto.getFilmDirector());
+        movie.setDescriptionMovie(movieDto.getDescriptionMovie());
+        movie.setCastMovie(movieDto.getCastMovie());
+        movie.setVidUrl(movieDto.getVidUrl());
+
+        Movie savedMovie = movieRepository.save(movie);
+        return convertToDto(savedMovie);
+    }
+
+    public MovieDto updateMovie(int id, MovieDto movieDto) {
+        Movie movie = movieRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+
+        movie.setTitle(movieDto.getTitle());
+        movie.setReleaseDate(movieDto.getReleaseDate());
+        movie.setDuration(movieDto.getDuration());
+        movie.setGenre(movieDto.getGenre());
+        movie.setLimitAge(movieDto.getLimitAge());
+        movie.setPoster(movieDto.getPoster());
+        movie.setRating(movieDto.getRating());
+        movie.setFilmDirector(movieDto.getFilmDirector());
+        movie.setDescriptionMovie(movieDto.getDescriptionMovie());
+        movie.setCastMovie(movieDto.getCastMovie());
+        movie.setVidUrl(movieDto.getVidUrl());
+        Movie savedMovie = movieRepository.save(movie);
+        return convertToDto(savedMovie);
+    }
+
     private MovieDto convertToDto(Movie movie) {
         return new MovieDto(
                 movie.getId(),

@@ -65,11 +65,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
-                        // chỉ user (ROLE_USER) mới được đặt vé
-                        .requestMatchers(HttpMethod.POST, "/api/bookings/**").hasRole("user")
-
-                        // chỉ admin (ROLE_ADMIN) mới được thêm phim
-                        .requestMatchers(HttpMethod.POST, "/api/movies/**").hasRole("admin")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
