@@ -1,5 +1,6 @@
 package com.example.api_movie.controller;
 
+import com.example.api_movie.dto.AuthResponse;
 import com.example.api_movie.dto.MovieDto;
 import com.example.api_movie.model.Movie;
 import com.example.api_movie.service.MovieService;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -32,8 +34,39 @@ public class MovieController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
-    public ResponseEntity<MovieDto> updateMovie(@PathVariable int id,@RequestBody MovieDto movieDto) {
-        MovieDto updatedMovie = movieService.updateMovie(id, movieDto);
-        return ResponseEntity.ok(updatedMovie);
+    public ResponseEntity<?> updateMovie(@PathVariable int id,@RequestBody MovieDto movieDto) {
+        try {
+            MovieDto updatedMovie = movieService.updateMovie(id, movieDto);
+            return ResponseEntity.ok(updatedMovie);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi server: " + e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> deleteMovie(@PathVariable int id) {
+        try {
+            movieService.deleteMovie(id);
+            return ResponseEntity.ok(Map.of("message", "Phim đã được xoá thành công."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi server: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMovieById(@PathVariable int id) {
+        try {
+            MovieDto movieById = movieService.getMovieById(id);
+            return ResponseEntity.ok(movieById);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi server: " + e.getMessage()));
+        }
     }
 }

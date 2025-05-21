@@ -39,7 +39,7 @@ public class MovieService {
 
     public MovieDto updateMovie(int id, MovieDto movieDto) {
         Movie movie = movieRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Movie not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy movie có id: " + id));
 
         movie.setTitle(movieDto.getTitle());
         movie.setReleaseDate(movieDto.getReleaseDate());
@@ -54,6 +54,21 @@ public class MovieService {
         movie.setVidUrl(movieDto.getVidUrl());
         Movie savedMovie = movieRepository.save(movie);
         return convertToDto(savedMovie);
+    }
+
+    public void deleteMovie(int id) {
+        if (!movieRepository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy movie có id: " + id);
+        }
+        movieRepository.deleteById(id);
+    }
+
+    public MovieDto getMovieById(int id) {
+        if (!movieRepository.existsById(id)) {
+            throw new RuntimeException("Không tim thấy movie có id: " + id);
+        }
+        return convertToDto(movieRepository.findById(id).get());
+
     }
 
     private MovieDto convertToDto(Movie movie) {
