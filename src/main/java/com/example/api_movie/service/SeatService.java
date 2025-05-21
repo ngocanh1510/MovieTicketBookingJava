@@ -22,6 +22,7 @@ public class SeatService {
 
     private SeatDto convertToDto(Seat seat) {
         return new SeatDto(
+            seat.getId(),
             seat.getRoom().getName(),
             seat.getRow(),
             seat.getNumber(),

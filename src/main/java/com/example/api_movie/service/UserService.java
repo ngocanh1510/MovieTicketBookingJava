@@ -4,6 +4,7 @@ import com.example.api_movie.dto.UserDto;
 import com.example.api_movie.model.User;
 import com.example.api_movie.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -48,5 +49,10 @@ public class UserService {
                 user.getAvatar()
         );
 
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 }
