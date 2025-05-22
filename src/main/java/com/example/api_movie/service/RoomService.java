@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
     private TheaterRepository theaterRepository;
 
     public List<RoomDto> getAllRooms() {
@@ -29,30 +30,33 @@ public class RoomService {
         Room room = new Room();
         room.setName(roomDto.getRoomName());
 
-        Theater theater = theaterRepository.findByName(roomDto.getTheaterName());
-        if (theater == null) {
-            throw new RuntimeException("Theater not found with name: " + roomDto.getTheaterName());
-        }
+        Theater theater = theaterRepository.findById(roomDto.getTheaterId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy rạp có id: " + roomDto.getTheaterId()));
         room.setTheater(theater);
         room.setCapacity(roomDto.getCapacity());
 
         roomRepository.save(room);
-        return convertToDto(room);
+        return convertToRequestDto(room);
     }
 
     public RoomDto updateRoom(int id, RoomDto roomDto) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng có id: " + id));
         room.setName(roomDto.getRoomName());
-        Theater theater = theaterRepository.findByName(roomDto.getTheaterName());
-        if (theater == null) {
-            throw new RuntimeException("Theater not found with name: " + roomDto.getTheaterName());
-        }
+        Theater theater = theaterRepository.findById(roomDto.getTheaterId())
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy rạp có id: " + roomDto.getTheaterId()));
         room.setTheater(theater);
         room.setCapacity(roomDto.getCapacity());
 
         roomRepository.save(room);
-        return convertToDto(room);
+        return convertToRequestDto(room);
+    }
+
+    public void deleteRoom(int id) {
+        if (!roomRepository.existsById(id)) {
+            throw new RuntimeException("Không tìm thấy room có id: " + id);
+        }
+        roomRepository.deleteById(id);
     }
     private RoomDto convertToDto(Room room) {
         return new RoomDto(
@@ -61,4 +65,15 @@ public class RoomService {
                 room.getCapacity()
         );
     }
+
+    private RoomDto convertToRequestDto(Room room) {
+        return new RoomDto(
+                room.getTheater().getId(),
+                room.getTheater().getName(),
+                room.getName(),
+                room.getCapacity()
+        );
+    }
+
+
 }
