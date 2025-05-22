@@ -2,6 +2,9 @@ package com.example.api_movie.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "Seats")
 @Getter
@@ -20,12 +23,13 @@ public class Seat {
     private int number;
     @Enumerated(EnumType.STRING) // Lưu enum dưới dạng chuỗi trong DB
     private Status status;
-    private int price;
+    private BigDecimal price;
 
     public enum Status {
         available,
         selected,
         booked,
     }
+
 
 }
