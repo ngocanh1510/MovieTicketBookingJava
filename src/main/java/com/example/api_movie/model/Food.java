@@ -2,12 +2,6 @@ package com.example.api_movie.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import java.io.IOException;
 
 
 @Entity

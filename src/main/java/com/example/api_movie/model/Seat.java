@@ -21,7 +21,7 @@ public class Seat {
     private Room room;
     private char row;
     private int number;
-    @Enumerated(EnumType.STRING) // Lưu enum dưới dạng chuỗi trong DB
+    @Enumerated(EnumType.STRING)
     private Status status;
     private BigDecimal price;
 

@@ -8,24 +8,14 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShowtimeDto {
-    private int movieId;
+public class ShowtimeResponseDto {
     private String movieTitle;
-    private int roomId;
     private String roomName;
     private LocalDate date;
     private LocalTime time;
     private String language;
-
-    public ShowtimeDto(int movieId, int roomId, LocalDate date, LocalTime time, String language) {
-        this.movieId = movieId;
-        this.roomId = roomId;
-        this.date = date;
-        this.time = time;
-        this.language = language;
-    }
 }

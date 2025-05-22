@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 
 public class SeatDto {
-    private int id;
+    private int roomId;
     private String roomName;
     private char row;
     private int number;

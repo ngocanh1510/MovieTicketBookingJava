@@ -1,6 +1,7 @@
 package com.example.api_movie.service;
 
 import com.example.api_movie.dto.ShowtimeDto;
+import com.example.api_movie.dto.ShowtimeResponseDto;
 import com.example.api_movie.model.Movie;
 import com.example.api_movie.model.Room;
 import com.example.api_movie.model.Showtime;
@@ -23,11 +24,11 @@ public class ShowtimeService {
     private MovieRepository movieRepository;
     @Autowired
     private RoomRepository roomRepository;
-    public List<ShowtimeDto> getAllMovies() {
+    public List<ShowtimeResponseDto> getAllMovies() {
         return showtimeRepository.findAllByOrderByMovieTitleAsc().stream().map(this::convertToResponseDto).collect(Collectors.toList());
     }
 
-    public List<ShowtimeDto> getShowtimeByMovieTitle(String title){
+    public List<ShowtimeResponseDto> getShowtimeByMovieTitle(String title){
         return showtimeRepository.findShowtimeByMovie_Title(title).stream().map(this::convertToResponseDto).collect(Collectors.toList());
     }
 
@@ -77,8 +78,8 @@ public class ShowtimeService {
         showtimeRepository.deleteById(id);
     }
 
-    private ShowtimeDto convertToResponseDto(Showtime showtime) {
-        return new ShowtimeDto(
+    private ShowtimeResponseDto convertToResponseDto(Showtime showtime) {
+        return new ShowtimeResponseDto(
                 showtime.getMovie().getTitle(),
                 showtime.getRoom().getName(),
                 showtime.getDate(),
