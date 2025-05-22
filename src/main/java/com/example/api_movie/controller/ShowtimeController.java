@@ -1,6 +1,7 @@
 package com.example.api_movie.controller;
 
 import com.example.api_movie.dto.ShowtimeDto;
+import com.example.api_movie.dto.ShowtimeResponseDto;
 import com.example.api_movie.service.ShowtimeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,13 @@ public class ShowtimeController {
 
     // Lấy tất cả suất chiếu
     @GetMapping
-    public List<ShowtimeDto> getAllShowtimes() {
+    public List<ShowtimeResponseDto> getAllShowtimes() {
         return showtimeService.getAllMovies();
     }
 
     // Tìm suất chiếu theo tên phim
     @GetMapping("/title/{title}")
-    public List<ShowtimeDto> getShowtimeByMovieTitle(@PathVariable String title) {
+    public List<ShowtimeResponseDto> getShowtimeByMovieTitle(@PathVariable String title) {
         return showtimeService.getShowtimeByMovieTitle(title);
     }
 
