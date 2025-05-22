@@ -2,6 +2,7 @@ package com.example.api_movie.controller;
 
 import com.example.api_movie.DatVe.BookingService;
 import com.example.api_movie.dto.BookingDto;
+import com.example.api_movie.dto.BookingResponseDto;
 import com.example.api_movie.model.Booking;
 import com.example.api_movie.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,12 @@ public class BookingController {
 
     @PostMapping
     @PreAuthorize("hasRole('admin') or hasRole('user')")
-    public ResponseEntity<Booking> createBooking(@RequestBody BookingDto bookingDto, Authentication authentication) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingDto bookingDto, Authentication authentication) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         int userId = userService.findByUsername(username).getId();
         bookingDto.setUserId(userId);
 
-        Booking createdBooking = bookingService.createBooking(bookingDto);
+        BookingResponseDto createdBooking = bookingService.createBooking(bookingDto);
         return ResponseEntity.ok(createdBooking);
     }
 }
