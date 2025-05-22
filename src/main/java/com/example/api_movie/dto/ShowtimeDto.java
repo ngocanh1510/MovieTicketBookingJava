@@ -13,9 +13,27 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShowtimeDto {
+    private int movieId;
     private String movieTitle;
+    private int roomId;
     private String roomName;
     private LocalDate date;
     private LocalTime time;
     private String language;
+
+    public ShowtimeDto(String movieTitle, String roomName, LocalDate date, LocalTime time, String language) {
+        this.movieTitle = movieTitle;
+        this.roomName = roomName;
+        this.date = date;
+        this.time = time;
+        this.language = language;
+    }
+
+    public ShowtimeDto(int movieId, int roomId, LocalDate date, LocalTime time, String language) {
+        this.movieId = movieId;
+        this.roomId = roomId;
+        this.date = date;
+        this.time = time;
+        this.language = language;
+    }
 }

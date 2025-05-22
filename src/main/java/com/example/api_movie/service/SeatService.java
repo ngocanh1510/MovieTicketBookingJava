@@ -1,9 +1,7 @@
 package com.example.api_movie.service;
 
 import com.example.api_movie.dto.SeatDto;
-import com.example.api_movie.dto.ShowtimeDto;
 import com.example.api_movie.model.Seat;
-import com.example.api_movie.model.Showtime;
 import com.example.api_movie.repository.SeatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
