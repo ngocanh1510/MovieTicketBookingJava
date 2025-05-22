@@ -17,5 +17,6 @@ public class BookingDto {
     private Integer userId;
     private String paymentStatus;
     private List<TicketDto> tickets;
+    private List<FoodBookingRequest> foodBookings;
     private BigDecimal totalPrice;
 }

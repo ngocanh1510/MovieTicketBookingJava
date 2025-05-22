@@ -2,7 +2,7 @@ package com.example.api_movie.controller;
 
 import com.example.api_movie.dto.FoodDto;
 import com.example.api_movie.model.Food;
-import com.example.api_movie.service.FoodService;
+import com.example.api_movie.DatVe.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
