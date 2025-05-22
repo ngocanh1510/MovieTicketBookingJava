@@ -1,5 +1,6 @@
 package com.example.api_movie.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class FoodBooking {
     @EmbeddedId
+    @JsonIgnore
     private FoodBookingKey id;
 
     @ManyToOne
@@ -27,6 +29,7 @@ public class FoodBooking {
     @ManyToOne
     @MapsId("bookingId")
     @JoinColumn(name = "booking_id")
+    @JsonIgnore
     private Booking booking;
 
     private int quantity;

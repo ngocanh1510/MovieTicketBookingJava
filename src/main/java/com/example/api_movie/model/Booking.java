@@ -21,9 +21,14 @@ public class Booking {
     private Integer id;
 
     private Integer userId;
-    private String paymentStatus;
-    private BigDecimal total;
+
 
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<Ticket> tickets;
+
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
+    private List<FoodBooking> foodBookings;
+
+    private String paymentStatus;
+    private BigDecimal total;
 }

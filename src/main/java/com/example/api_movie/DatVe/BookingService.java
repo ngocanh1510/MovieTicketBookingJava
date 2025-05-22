@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class BookingService {
@@ -50,10 +52,17 @@ public class BookingService {
 
         booking.setTickets(tickets);
 
+        //Set<FoodBookingKey> keys = new HashSet<>();
         List<FoodBooking> foodBookingList = new ArrayList<>();
         BigDecimal foodTotal = BigDecimal.ZERO;
 
         for (FoodBookingRequest foodRequest : request.getFoodBookings()) {
+//            FoodBookingKey key = new FoodBookingKey(foodRequest.getFoodId(), booking.getId());
+//
+//            if (!keys.add(key)) {
+//                throw new RuntimeException("Duplicate food booking detected.");
+//            }
+
             Food food = foodRepository.findById(foodRequest.getFoodId())
                     .orElseThrow(() -> new RuntimeException("Food not found"));
 
@@ -71,7 +80,8 @@ public class BookingService {
 
         }
 
-        foodBookingRepository.saveAll(foodBookingList);
+        booking.setFoodBookings(foodBookingList);
+        //foodBookingRepository.saveAll(foodBookingList);
 
         //Tính tổng tiền
         booking.setTotal(ticketTotal.add(foodTotal));
