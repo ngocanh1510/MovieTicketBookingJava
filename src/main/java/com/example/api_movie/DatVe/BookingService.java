@@ -146,4 +146,17 @@ public class BookingService {
 
         return dto;
     }
+
+    public Booking updateStatus(int bookingId, String newStatus) {
+        // Tìm booking theo id
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + bookingId));
+
+        // Cập nhật trạng thái mới
+        booking.setPaymentStatus(newStatus);
+
+        // Lưu lại booking
+        return bookingRepository.save(booking);
+    }
 }
+
