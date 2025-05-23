@@ -16,15 +16,19 @@ public class RoomController {
     @Autowired
     private RoomService roomService;
 
+    // API lấy toàn bộ thông tin phòng
     @GetMapping
     public List<RoomDto> getAllRooms() {
         return roomService.getAllRooms();
     }
 
+    // API lấy thông tin phòng theo tên rạp
     @GetMapping("/{theaterName}")
     public List<RoomDto> getRoomByTheaterName(@PathVariable("theaterName") String theaterName) {
         return roomService.getRoomByTheaterName(theaterName);
     }
+
+    // API thêm phòng của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<RoomDto> addRoom(@RequestBody RoomDto roomDto) {
@@ -32,7 +36,7 @@ public class RoomController {
         return ResponseEntity.ok(createdRoom);
     }
 
-    // Cập nhật suất chiếu theo ID
+    // API cập nhật phòng của admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> updateRoom(@PathVariable int id, @RequestBody RoomDto roomDto) {
@@ -46,7 +50,7 @@ public class RoomController {
         }
     }
 
-    // Xoá suất chiếu theo ID
+    // API xóa phòng của admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> deleteRoom(@PathVariable int id) {

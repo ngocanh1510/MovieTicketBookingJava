@@ -17,11 +17,13 @@ public class TheaterController {
     @Autowired
     private TheaterService theaterService;
 
+    // API lấy toàn bộ thông tin rạp
     @GetMapping
     public List<TheaterDto> getAllTheaters() {
         return theaterService.getAllTheaters();
     }
 
+    // API thêm rạp của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<TheaterDto> createTheater(@RequestBody TheaterDto theaterDto) {
@@ -29,6 +31,7 @@ public class TheaterController {
         return ResponseEntity.ok(createdtheater);
     }
 
+    // API cập nhật rạp của admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> updateTheater(@PathVariable int id,@RequestBody TheaterDto theaterDto){
@@ -42,6 +45,7 @@ public class TheaterController {
         }
     }
 
+    // API xóa rạp của admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> deleteTheater(@PathVariable int id) {

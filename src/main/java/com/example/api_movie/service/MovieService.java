@@ -15,10 +15,12 @@ public class MovieService {
     @Autowired
     private MovieRepository movieRepository;
 
+    // Lấy thông tin phim
     public List<MovieDto> getAllMovies() {
         return movieRepository.findAll().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    // Thêm phim của admin
     public MovieDto addMovie(MovieDto movieDto) {
         Movie movie = new Movie();
         movie.setTitle(movieDto.getTitle());
@@ -37,6 +39,7 @@ public class MovieService {
         return convertToDto(savedMovie);
     }
 
+    // Cập phim của admin
     public MovieDto updateMovie(int id, MovieDto movieDto) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy movie có id: " + id));
@@ -56,6 +59,7 @@ public class MovieService {
         return convertToDto(savedMovie);
     }
 
+    // Xóa phim của admin
     public void deleteMovie(int id) {
         if (!movieRepository.existsById(id)) {
             throw new RuntimeException("Không tìm thấy movie có id: " + id);
@@ -63,6 +67,7 @@ public class MovieService {
         movieRepository.deleteById(id);
     }
 
+    // Lấy thông tin phim theo Id
     public MovieDto getMovieById(int id) {
         if (!movieRepository.existsById(id)) {
             throw new RuntimeException("Không tim thấy movie có id: " + id);

@@ -18,11 +18,13 @@ public class SeatController {
     @Autowired
     private SeatService seatService;
 
+    // API lấy thông tin ghế theo tên phòng
     @GetMapping("/{roomName}")
     public List<SeatDto> getSeatsByRoomName(@PathVariable String roomName) {
         return seatService.findSeatsByRoomName(roomName);
     }
 
+    // API thêm ghế của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<SeatDto> createSeat(@RequestBody SeatDto seatDto) {
@@ -30,6 +32,7 @@ public class SeatController {
         return ResponseEntity.ok(createdSeat);
     }
 
+    // API cập nhật ghế của admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> updateSeat(@PathVariable int id,@RequestBody SeatDto seatDto) {
@@ -43,6 +46,7 @@ public class SeatController {
         }
     }
 
+    // API xóa ghế của admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> deleteSeat(@PathVariable int id) {

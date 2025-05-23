@@ -18,10 +18,12 @@ public class TheaterService {
     @Autowired
     private BrandRepository brandRepository;
 
+    // Lấy toàn bộ thông tin rạp
     public List<TheaterDto> getAllTheaters() {
         return theaterRepository.findAllByOrderByNameAsc().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    // Thêm rạp của admin
     public TheaterDto addTheater(TheaterDto theaterDto) {
         Theater theater = new Theater();
 
@@ -34,6 +36,7 @@ public class TheaterService {
         return convertToRequestDto(theater);
     }
 
+    // Cập nhật rạp của admin
     public TheaterDto updateTheater(int id,TheaterDto theaterDto) {
         Theater theater = theaterRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy theater có id: " + id));
@@ -46,6 +49,7 @@ public class TheaterService {
         return convertToRequestDto(theater);
     }
 
+    // Xóa rạp của admin
     public void deleteTheater(int id) {
         if(!theaterRepository.existsById(id)) {
             throw  new RuntimeException("Không tìm thấy theater có id: " + id);

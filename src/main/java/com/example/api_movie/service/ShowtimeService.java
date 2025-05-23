@@ -24,14 +24,18 @@ public class ShowtimeService {
     private MovieRepository movieRepository;
     @Autowired
     private RoomRepository roomRepository;
-    public List<ShowtimeResponseDto> getAllMovies() {
+
+    // Lấy toàn bộ thông tin suất chiếu
+    public List<ShowtimeResponseDto> getAllShowtimes() {
         return showtimeRepository.findAllByOrderByMovieTitleAsc().stream().map(this::convertToResponseDto).collect(Collectors.toList());
     }
 
+    // Lấy thông tin suất chiếu theo tên phim
     public List<ShowtimeResponseDto> getShowtimeByMovieTitle(String title){
         return showtimeRepository.findShowtimeByMovie_Title(title).stream().map(this::convertToResponseDto).collect(Collectors.toList());
     }
 
+    // Thêm suất chiếu cho admin
     public ShowtimeDto addShowtime(ShowtimeDto showtimeDto){
         Showtime showtime = new Showtime();
 
@@ -52,6 +56,7 @@ public class ShowtimeService {
         return convertToRequestDto(savedShowtime);
     }
 
+    // Cập nhật suất chiếu cho admin
     public ShowtimeDto updateShowtime(int id, ShowtimeDto showtimeDto){
         Showtime showtime = showtimeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy showtime có id: " + id));
@@ -71,6 +76,7 @@ public class ShowtimeService {
         return convertToRequestDto(savedShowtime);
     }
 
+    // Xóa suất chiếu cho admin
     public void deleteMovie(int id) {
         if (!showtimeRepository.existsById(id)) {
             throw new RuntimeException("Không tìm thấy showtime có id: " + id);

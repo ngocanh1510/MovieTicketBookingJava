@@ -16,6 +16,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
+    //APi đăng ký
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
@@ -28,6 +29,7 @@ public class AuthController {
         }
     }
 
+    // API đăng nhập
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {

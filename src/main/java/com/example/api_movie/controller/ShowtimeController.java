@@ -23,7 +23,7 @@ public class ShowtimeController {
     // Lấy tất cả suất chiếu
     @GetMapping
     public List<ShowtimeResponseDto> getAllShowtimes() {
-        return showtimeService.getAllMovies();
+        return showtimeService.getAllShowtimes();
     }
 
     // Tìm suất chiếu theo tên phim

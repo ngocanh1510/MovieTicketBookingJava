@@ -18,12 +18,13 @@ public class TicketService {
     @Autowired
     private SeatRepository seatRepository;
 
+    //Tạo vé
     public Ticket createTicket(TicketDto dto, int userId, Booking booking) {
         Seat seat = seatRepository.findById(dto.getSeatId())
-                .orElseThrow(() -> new RuntimeException("Seat not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy ghế"));
 
         if (seat.getStatus() != Seat.Status.available) {
-            throw new RuntimeException("Seat is not available");
+            throw new RuntimeException("Ghế không có sẵn");
         }
 
         seat.setStatus(Seat.Status.booked);

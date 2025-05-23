@@ -13,6 +13,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    //Lấy thông tin user thông qua id
     public UserDto getCurrentUser(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -27,6 +28,7 @@ public class UserService {
         );
     }
 
+    // Cập nhật thông tin user
     public UserDto updateUser(String username, UserDto updatedUserDto) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));

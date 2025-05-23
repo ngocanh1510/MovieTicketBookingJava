@@ -18,10 +18,12 @@ public class SeatService {
     @Autowired
     private RoomRepository roomRepository;
 
+    // Lấy thông tin ghế theo tên phòng
     public List<SeatDto> findSeatsByRoomName(String roomName) {
         return seatRepository.findSeatsByRoom_Name(roomName).stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    // Thêm ghế của admin
     public SeatDto addSeat(SeatDto seatDto) {
         Seat seat = new Seat();
         Room room = roomRepository.findById(seatDto.getRoomId())
@@ -35,6 +37,7 @@ public class SeatService {
         return convertToDto(seat);
     }
 
+    // Cập nhật ghế của admin
     public SeatDto updateSeat(int id,SeatDto seatDto) {
         Seat seat = seatRepository.findById(id)
                 .orElseThrow(()->new RuntimeException("Không tìm thấy ghế"));
@@ -49,6 +52,7 @@ public class SeatService {
         return convertToDto(seat);
     }
 
+    // Xóa ghế của admin
     public void deleteSeat(int id) {
         if(!seatRepository.existsById(id)) {
             throw new RuntimeException("Không tìm thấy ghế");

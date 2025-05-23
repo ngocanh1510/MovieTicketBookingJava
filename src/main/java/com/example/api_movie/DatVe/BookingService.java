@@ -33,6 +33,7 @@ public class BookingService {
     @Autowired
     private SeatRepository seatRepository;
 
+    //Đặt vé
     public BookingResponseDto createBooking(BookingDto request) {
         Booking booking = new Booking();
         booking.setUserId(request.getUserId());
@@ -83,6 +84,28 @@ public class BookingService {
         booking.setTotal(ticketTotal.add(foodTotal));
         bookingRepository.save(booking);
         return mapToResponseDto(booking, tickets, foodBookingList);
+    }
+
+    //Lấy thông tin đặt vé của user
+    public List<BookingResponseDto> getBookingsByUserId(Integer userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
+
+        return bookings.stream().map(booking -> {
+            List<Ticket> tickets = booking.getTickets();
+            List<FoodBooking> foodBookings = booking.getFoodBookings();
+            return mapToResponseDto(booking, tickets, foodBookings);
+        }).toList();
+    }
+
+    //Lấy thông tin đặt vé của adin
+    public List<BookingResponseDto> getBookingsByAdminId(Integer userId) {
+        List<Booking> bookings = bookingRepository.findAll();
+
+        return bookings.stream().map(booking -> {
+            List<Ticket> tickets = booking.getTickets();
+            List<FoodBooking> foodBookings = booking.getFoodBookings();
+            return mapToResponseDto(booking, tickets, foodBookings);
+        }).toList();
     }
 
     private BookingResponseDto mapToResponseDto(Booking booking, List<Ticket> tickets, List<FoodBooking> foodBookingList) {
