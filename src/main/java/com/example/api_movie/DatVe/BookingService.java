@@ -1,12 +1,8 @@
 package com.example.api_movie.DatVe;
 
-import com.example.api_movie.dto.BookingDto;
-import com.example.api_movie.dto.FoodBookingRequest;
-import com.example.api_movie.dto.TicketDto;
+import com.example.api_movie.dto.*;
 import com.example.api_movie.model.*;
-import com.example.api_movie.repository.BookingRepository;
-import com.example.api_movie.repository.FoodBookingRepository;
-import com.example.api_movie.repository.FoodRepository;
+import com.example.api_movie.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +27,14 @@ public class BookingService {
     @Autowired
     private FoodRepository foodRepository;
 
-    public Booking createBooking(BookingDto request) {
+    @Autowired
+    private ShowtimeRepository showtimeRepository;
+
+    @Autowired
+    private SeatRepository seatRepository;
+
+    //Đặt vé
+    public BookingResponseDto createBooking(BookingDto request) {
         Booking booking = new Booking();
         booking.setUserId(request.getUserId());
         booking.setPaymentStatus("pending");
@@ -57,12 +60,6 @@ public class BookingService {
         BigDecimal foodTotal = BigDecimal.ZERO;
 
         for (FoodBookingRequest foodRequest : request.getFoodBookings()) {
-//            FoodBookingKey key = new FoodBookingKey(foodRequest.getFoodId(), booking.getId());
-//
-//            if (!keys.add(key)) {
-//                throw new RuntimeException("Duplicate food booking detected.");
-//            }
-
             Food food = foodRepository.findById(foodRequest.getFoodId())
                     .orElseThrow(() -> new RuntimeException("Food not found"));
 
@@ -85,19 +82,68 @@ public class BookingService {
 
         //Tính tổng tiền
         booking.setTotal(ticketTotal.add(foodTotal));
-
-        return bookingRepository.save(booking);
+        bookingRepository.save(booking);
+        return mapToResponseDto(booking, tickets, foodBookingList);
     }
 
-    public Booking updateStatus(int bookingId, String newStatus) {
-        // Tìm booking theo id
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + bookingId));
+    //Lấy thông tin đặt vé của user
+    public List<BookingResponseDto> getBookingsByUserId(Integer userId) {
+        List<Booking> bookings = bookingRepository.findByUserId(userId);
 
-        // Cập nhật trạng thái mới
-        booking.setPaymentStatus(newStatus);
+        return bookings.stream().map(booking -> {
+            List<Ticket> tickets = booking.getTickets();
+            List<FoodBooking> foodBookings = booking.getFoodBookings();
+            return mapToResponseDto(booking, tickets, foodBookings);
+        }).toList();
+    }
 
-        // Lưu lại booking
-        return bookingRepository.save(booking);
+    //Lấy thông tin đặt vé của adin
+    public List<BookingResponseDto> getBookingsByAdminId(Integer userId) {
+        List<Booking> bookings = bookingRepository.findAll();
+
+        return bookings.stream().map(booking -> {
+            List<Ticket> tickets = booking.getTickets();
+            List<FoodBooking> foodBookings = booking.getFoodBookings();
+            return mapToResponseDto(booking, tickets, foodBookings);
+        }).toList();
+    }
+
+    private BookingResponseDto mapToResponseDto(Booking booking, List<Ticket> tickets, List<FoodBooking> foodBookingList) {
+        BookingResponseDto dto = new BookingResponseDto();
+        dto.setId(booking.getId());
+        dto.setPaymentStatus(booking.getPaymentStatus());
+        dto.setTotal(booking.getTotal());
+
+        // Map vé
+        List<TicketResponseDto> ticketDtos = tickets.stream().map(ticket -> {
+            TicketResponseDto t = new TicketResponseDto();
+            t.setId(ticket.getId());
+            t.setPrice(ticket.getPrice());
+
+            t.setSeatName(seatRepository.findById(ticket.getSeatId())
+                    .map(seat -> seat.getRow() + String.valueOf(seat.getNumber()))
+                    .orElse("Unknown"));
+
+            // Lấy showtime
+            ShowtimeResponseDto showtimeDto = showtimeRepository.findById(ticket.getShowtime().getId())
+                    .map(showtime -> {
+                        ShowtimeResponseDto showtimeResponseDto = new ShowtimeResponseDto();
+                        showtimeResponseDto.setMovieTitle(showtime.getMovie().getTitle());
+                        showtimeResponseDto.setRoomName(showtime.getRoom().getName());
+                        showtimeResponseDto.setDate(showtime.getDate());
+                        showtimeResponseDto.setTime(showtime.getTime());
+                        showtimeResponseDto.setLanguage(showtime.getLanguage());
+                        return showtimeResponseDto;
+                    })
+                    .orElse(null);
+
+            t.setShowtime(showtimeDto);
+            return t;
+        }).toList();
+        dto.setTickets(ticketDtos);
+
+        dto.setFoodBookings(foodBookingList);
+
+        return dto;
     }
 }

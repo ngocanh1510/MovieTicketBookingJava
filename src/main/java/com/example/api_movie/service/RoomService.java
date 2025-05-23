@@ -18,14 +18,17 @@ public class RoomService {
     @Autowired
     private TheaterRepository theaterRepository;
 
+    // Lấy toàn bộ thông tin phòng
     public List<RoomDto> getAllRooms() {
         return roomRepository.findAllByOrderByTheaterNameAsc().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    // Lấy thông tin phòng theo tên rạp
     public List<RoomDto> getRoomByTheaterName(String theaterName) {
         return roomRepository.findByTheaterName(theaterName).stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
+    // Thêm phòng của admin
     public RoomDto addRoom(RoomDto roomDto) {
         Room room = new Room();
         room.setName(roomDto.getRoomName());
@@ -39,6 +42,7 @@ public class RoomService {
         return convertToRequestDto(room);
     }
 
+    // Cập nhật phòng của admin
     public RoomDto updateRoom(int id, RoomDto roomDto) {
         Room room = roomRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng có id: " + id));
@@ -52,6 +56,7 @@ public class RoomService {
         return convertToRequestDto(room);
     }
 
+    // Xóa phòng của admin
     public void deleteRoom(int id) {
         if (!roomRepository.existsById(id)) {
             throw new RuntimeException("Không tìm thấy room có id: " + id);

@@ -17,6 +17,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // API lấy thông tin cá nhân của người dùng
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUserInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -24,6 +25,7 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    // API cập nhật thông tin cá nhân của người dùng
     @PutMapping("/me")
     public ResponseEntity<?> updateUser(@RequestBody UserDto updatedUserDto) {
         try {

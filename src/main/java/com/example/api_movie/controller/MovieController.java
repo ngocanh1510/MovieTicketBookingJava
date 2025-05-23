@@ -20,11 +20,13 @@ public class MovieController {
     @Autowired
     private MovieService movieService;
 
+    // API lấy toàn bộ phim
     @GetMapping
     public List<MovieDto> getAllMovies() {
         return movieService.getAllMovies();
     }
 
+    // API thêm phim của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<MovieDto> addMovie(@RequestBody MovieDto movieDto) {
@@ -32,6 +34,7 @@ public class MovieController {
         return ResponseEntity.ok(createdMovie);
     }
 
+    // API cập nhật phim của admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> updateMovie(@PathVariable int id,@RequestBody MovieDto movieDto) {
@@ -45,6 +48,7 @@ public class MovieController {
         }
     }
 
+    // API xóa phim của admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> deleteMovie(@PathVariable int id) {
@@ -58,6 +62,7 @@ public class MovieController {
         }
     }
 
+    // API lấy thông tin phim theo id
     @GetMapping("/{id}")
     public ResponseEntity<?> getMovieById(@PathVariable int id) {
         try {

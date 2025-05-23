@@ -17,16 +17,19 @@ public class FoodController {
     @Autowired
     private FoodService foodService;
 
+    // API lấy toàn bộ thông tin thức ăn
     @GetMapping
     public List<FoodDto> getAll() {
         return foodService.findAll();
     }
 
+    // API lấy thông tin thức ăn theo loại
     @GetMapping("/{category}")
     public List<FoodDto> getByCategory(@PathVariable Food.Category category) {
         return foodService.findByCategory(category);
     }
 
+    // API thêm thức ăn của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<FoodDto> createFood(@RequestBody FoodDto foodDto) {
@@ -34,6 +37,7 @@ public class FoodController {
         return ResponseEntity.ok(createdFood);
     }
 
+    // API cập nhật thức ăn của admin
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> updateFood(@PathVariable int id,@RequestBody FoodDto foodDto) {
@@ -47,6 +51,7 @@ public class FoodController {
         }
     }
 
+    // API xóa thức ăn của admin
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('admin')")
     public ResponseEntity<?> deleteFood(@PathVariable int id) {

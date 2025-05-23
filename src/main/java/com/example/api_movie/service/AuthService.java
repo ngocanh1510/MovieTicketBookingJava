@@ -21,6 +21,7 @@ public class AuthService {
     @Autowired
     private JwtService jwtService;
 
+    //Đăng ký
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username đã tồn tại");
@@ -41,6 +42,7 @@ public class AuthService {
         return new AuthResponse(token);
     }
 
+    //Đăng nhập
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy User"));
