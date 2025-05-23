@@ -3,6 +3,8 @@ package com.example.api_movie.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 
 @Entity
 @Table(name = "Food_Beverage")
@@ -16,7 +18,7 @@ public class Food {
     private int id;
 
     private String name;
-    private int price;
+    private BigDecimal price;
     private String detail;
     private String img;
 

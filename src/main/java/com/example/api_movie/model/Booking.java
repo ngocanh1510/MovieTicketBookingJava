@@ -29,6 +29,7 @@ public class Booking {
     @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL)
     private List<FoodBooking> foodBookings;
 
+    @Column(name = "payment_status")
     private String paymentStatus;
     private BigDecimal total;
 }

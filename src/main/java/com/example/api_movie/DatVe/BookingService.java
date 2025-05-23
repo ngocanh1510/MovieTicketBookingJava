@@ -75,8 +75,8 @@ public class BookingService {
             foodBookingList.add(foodBooking);
 
             // Tính tiền thức ăn
-            foodTotal = foodTotal.add(BigDecimal.valueOf(food.getPrice())
-                    .multiply(BigDecimal.valueOf(foodRequest.getQuantity())));
+            foodTotal = foodTotal.add(food.getPrice())
+                    .multiply(BigDecimal.valueOf(foodRequest.getQuantity()));
 
         }
 
@@ -86,6 +86,18 @@ public class BookingService {
         //Tính tổng tiền
         booking.setTotal(ticketTotal.add(foodTotal));
 
+        return bookingRepository.save(booking);
+    }
+
+    public Booking updateStatus(int bookingId, String newStatus) {
+        // Tìm booking theo id
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found with id: " + bookingId));
+
+        // Cập nhật trạng thái mới
+        booking.setPaymentStatus(newStatus);
+
+        // Lưu lại booking
         return bookingRepository.save(booking);
     }
 }

@@ -14,7 +14,9 @@ public class Ticket {
 
     private Integer userId;
     private Integer seatId;
-    private Integer showtimeId;
+    @OneToOne
+    @JoinColumn(name = "showtime_id", nullable = false)
+    private Showtime showtime;
     private BigDecimal price;
 
     @ManyToOne
@@ -46,12 +48,12 @@ public class Ticket {
         this.seatId = seatId;
     }
 
-    public Integer getShowtimeId() {
-        return showtimeId;
+    public Showtime getShowtime() {
+        return showtime;
     }
 
-    public void setShowtimeId(Integer showtimeId) {
-        this.showtimeId = showtimeId;
+    public void setShowtime(Showtime showtime) {
+        this.showtime = showtime;
     }
 
     public BigDecimal getPrice() {
