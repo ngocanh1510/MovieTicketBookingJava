@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 
 public class FoodDto {
-    @Enumerated(EnumType.STRING)
     private Food.Category category;
     private String name;
     private BigDecimal price;

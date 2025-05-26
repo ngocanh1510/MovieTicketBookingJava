@@ -33,7 +33,7 @@ public class TheaterService {
         theater.setName(theaterDto.getName());
         theater.setLocation(theaterDto.getLocation());
         theaterRepository.save(theater);
-        return convertToRequestDto(theater);
+        return convertToDto(theater);
     }
 
     // Cập nhật rạp của admin
@@ -46,7 +46,7 @@ public class TheaterService {
         theater.setName(theaterDto.getName());
         theater.setLocation(theaterDto.getLocation());
         theaterRepository.save(theater);
-        return convertToRequestDto(theater);
+        return convertToDto(theater);
     }
 
     // Xóa rạp của admin
@@ -58,13 +58,6 @@ public class TheaterService {
     }
 
     private TheaterDto convertToDto(Theater theater) {
-        return new TheaterDto(
-                theater.getName(),
-                theater.getLocation(),
-                theater.getBrand().getName()
-        );
-    }
-    private TheaterDto convertToRequestDto(Theater theater) {
         return new TheaterDto(
                 theater.getBrand().getId(),
                 theater.getBrand().getName(),
