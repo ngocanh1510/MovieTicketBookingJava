@@ -72,8 +72,8 @@ public class BookingService {
             foodBookingList.add(foodBooking);
 
             // Tính tiền thức ăn
-            foodTotal = foodTotal.add(food.getPrice())
-                    .multiply(BigDecimal.valueOf(foodRequest.getQuantity()));
+            BigDecimal itemTotal = food.getPrice().multiply(BigDecimal.valueOf(foodRequest.getQuantity()));
+            foodTotal = foodTotal.add(itemTotal);
 
         }
 
