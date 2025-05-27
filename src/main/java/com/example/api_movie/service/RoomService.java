@@ -39,7 +39,7 @@ public class RoomService {
         room.setCapacity(roomDto.getCapacity());
 
         roomRepository.save(room);
-        return convertToRequestDto(room);
+        return convertToDto(room);
     }
 
     // Cập nhật phòng của admin
@@ -53,7 +53,7 @@ public class RoomService {
         room.setCapacity(roomDto.getCapacity());
 
         roomRepository.save(room);
-        return convertToRequestDto(room);
+        return convertToDto(room);
     }
 
     // Xóa phòng của admin
@@ -64,14 +64,6 @@ public class RoomService {
         roomRepository.deleteById(id);
     }
     private RoomDto convertToDto(Room room) {
-        return new RoomDto(
-                room.getTheater().getName(),
-                room.getName(),
-                room.getCapacity()
-        );
-    }
-
-    private RoomDto convertToRequestDto(Room room) {
         return new RoomDto(
                 room.getTheater().getId(),
                 room.getTheater().getName(),
