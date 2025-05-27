@@ -62,6 +62,9 @@ paths:
         required: true
         content:
           application/json:
+            example:
+              username: admin
+              password: 123
             schema:
               $ref: '#/components/schemas/LoginRequest'
       responses:
