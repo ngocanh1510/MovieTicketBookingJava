@@ -26,6 +26,11 @@ public class MovieController {
         return movieService.getAllMovies();
     }
 
+    @GetMapping("/search")
+    public List<MovieDto> searchMoviesByTitle(@RequestParam String title) {
+        return movieService.findMoviesByTitle(title);
+    }
+
     // API thêm phim của admin
     @PostMapping
     @PreAuthorize("hasRole('admin')")
