@@ -1,0 +1,1443 @@
+openapi: 3.0.3
+info:
+  title: Ceecine
+  description: API documentation of CeeCine
+  
+  version: 1.0.11
+
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: auth
+    description: auth API
+  - name: booking
+    description: booking API
+  - name: coupon
+    description: coupon API
+  - name: food
+    description: food API
+  - name: movie
+    description: movie API
+  - name: seat
+    description: seat API
+  - name: showtime
+    description: showtime API
+  - name: theater
+    description: theater API
+  - name: payment
+    description: payment API
+  - name: room
+    description: room API
+
+paths:
+
+#API AUTH
+  /auth/register:
+    post:
+      tags:
+        - auth
+      summary: Register a new account
+      description: Creates a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Account registered successfully
+        '400':
+          description: Invalid request data/ Email already exists
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      description: Authenticates a user and returns an access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful, returns JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Invalid credentials
+        '404':
+          description: Account does not exist
+        '500':
+          description: Internal server error
+
+#API USER
+  /user/me:
+    get:
+      tags:
+        - user
+      summary: Get user profile
+      description: Retrieves the profile information of the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+    put:
+      tags:
+        - user
+      summary: Update user profile
+      description: Updates the authenticated user's profile information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+        '400':
+          description: Invalid request data
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal server error
+
+#API COUPON
+  /coupons:
+    get:
+      tags:
+        - coupon
+      summary: Get all coupons
+      description: Retrieves a list of available coupons
+      responses:
+        '200':
+          description: List of coupons retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Coupon'
+        '500':
+          description: Internal server error
+
+#API BOOKING
+  /booking:
+    post:
+      tags:
+        - booking
+      summary: Create a booking
+      description: Creates a new booking (Requires authentication)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookingRequest'
+      responses:
+        '201':
+          description: Booking created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+        '400':
+          description: Invalid request body
+        '401':
+          description: Unauthorized
+        '422':
+          description: Validation error
+        '500':
+          description: Internal server error
+          
+  /booking/user:
+    get:
+      tags:
+        - booking
+      summary: Get booking details
+      description: Retrieves booking details (Requires authentication)
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+        - user
+      responses:
+        '200':
+          description: Booking retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+        '400':
+          description: Invalid query parameters
+        '401':
+          description: Unauthorized
+        '404':
+          description: Booking not found
+        '500':
+          description: Internal server error
+
+  /booking/admin:
+    get:
+      tags:
+        - booking
+      summary: Get booking details
+      description: Retrieves booking details. **Requires admin role.**
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      responses:
+        '200':
+          description: Booking retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookingResponse'
+        '400':
+          description: Invalid query parameters
+        '401':
+          description: Unauthorized
+        '404':
+          description: Booking not found
+        '500':
+          description: Internal server error
+
+#API FOOD
+  /foods:
+    get:
+      tags:
+        - food
+      summary: Get FoodList
+      description: Get all foods
+      responses:
+        '200':
+          description: Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '400':
+          description: Invalid request format
+        '404':
+          description: Coupon not found
+        '500':
+          description: Internal server error
+    post:
+      tags:
+        - food
+      summary: Add
+      description: Add food to Foodlist
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodResponse'
+      responses:
+        '200':
+          description: Add successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '400':
+          description: Invalid request format
+        '404':
+          description: Coupon not found
+        '500':
+          description: Internal server error
+          
+  /foods/{id}:
+    put:
+      tags:
+      - food
+      summary: Update food
+      description: Update food information
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FoodResponse'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Food update successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodResponse'
+        '401':
+          description:  Unauthorized
+        '500':
+          description: Internal server error
+    delete:
+      tags:
+        - food
+      summary: Delete food
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Movie ID
+      responses:
+        '200':
+          description: Food deleted successfully
+        '404':
+          description: Food not found
+        '500':
+          description: Internal server error
+  /foods/{category}:
+    get:
+      tags:
+        - food
+      summary: Get food by category
+      description: Get all food by category
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of all foods retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodResponse'
+        '401':
+          description:  Unauthorized
+        '500':
+          description: Internal server error
+          
+#API MOVIE          
+  /movies:
+    get:
+      tags:
+        - movie
+      summary: Get all movies
+      description: Retrieves a complete list of all movies
+      responses:
+        '200':
+          description: List of all movies retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+        '500':
+          description: Internal server error
+
+    post: 
+      tags:
+        - movie
+      summary: Add a movie
+      description: Add details of an existing movie
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Movie added successfully
+        '400':
+          description: Invalid request body
+        '500':
+          description: Internal server error
+  /movies/{id}:
+    get:
+      tags:
+        - movie
+      summary: Get movie details
+      description: Retrieves details of a specific movie
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Movie ID
+      responses:
+        '200':
+          description: Movie details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+
+    put:
+      tags:
+        - movie
+      summary: Edit a movie
+      description: Updates details of an existing movie
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Movie ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MovieRequest'
+      responses:
+        '200':
+          description: Movie updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+
+    delete:
+      tags:
+        - movie
+      summary: Delete a movie
+      description: Deletes a movie from the database
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+          description: Movie ID
+      responses:
+        '200':
+          description: Movie deleted successfully
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+#API SHOWTIME
+  /showtimes:
+    get:
+      tags:
+        - showtime
+      summary: Get all showtimes
+      description: Retrieves a list of all available showtimes
+      responses:
+        '200':
+          description: List of all showtimes retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShowtimeDto'
+        '500':
+          description: Internal server error
+
+    post:
+      tags:
+        - showtime
+      summary: Add a new showtime
+      description: Adds a new showtime (Admin only)
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShowtimeRequestDto'
+      responses:
+        '200':
+          description: Showtime added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShowtimeRequestDto'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '500':
+          description: Internal server error
+
+  /showtimes/{title}:
+    get:
+      tags:
+        - showtime
+      summary: Get showtimes by movie title
+      description: Retrieves showtimes for a specific movie by its title
+      parameters:
+        - in: path
+          name: title
+          required: true
+          schema:
+            type: string
+          description: The title of the movie
+      responses:
+        '200':
+          description: List of showtimes for the specified movie
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShowtimeDto'
+        '404':
+          description: Movie not found
+        '500':
+          description: Internal server error
+
+  /showtimes/{id}:
+    put:
+      tags:
+        - showtime
+      summary: Update a showtime
+      description: Updates the details of a specific showtime by ID (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the showtime
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShowtimeRequestDto'
+      responses:
+        '200':
+          description: Showtime updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShowtimeRequestDto'
+        '400':
+          description: Bad request
+        '404':
+          description: Showtime not found
+        '500':
+          description: Internal server error
+
+    delete:
+      tags:
+        - showtime
+      summary: Delete a showtime
+      description: Deletes a showtime by its ID (Admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the showtime
+      responses:
+        '200':
+          description: Showtime deleted successfully
+        '400':
+          description: Bad request
+        '404':
+          description: Showtime not found
+        '500':
+          description: Internal server error
+
+    
+#API SEAT
+  /seats/{roomName}:
+    get:
+      tags:
+        - seat
+      summary: Get seats by room name
+      description: Trả về danh sách các ghế trong một phòng cụ thể
+      parameters:
+        - name: roomName
+          in: path
+          required: true
+          description: Tên phòng
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Danh sách ghế trả về thành công
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SeatDto'
+        '500':
+          description: Lỗi server nội bộ
+
+  /seats:
+    post:
+      tags:
+        - seat
+      summary: Add new seat
+      description: API cho admin thêm ghế vào phòng
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeatDto'
+      responses:
+        '200':
+          description: Ghế được thêm thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatDto'
+        '500':
+          description: Lỗi server
+
+  /seats/{id}:
+    put:
+      tags:
+        - seat
+      summary: Update seat
+      description: API cho admin cập nhật ghế theo ID
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID của ghế
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SeatDto'
+      responses:
+        '200':
+          description: Ghế được cập nhật thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SeatDto'
+        '400':
+          description: Dữ liệu đầu vào không hợp lệ
+        '500':
+          description: Lỗi server
+
+    delete:
+      tags:
+        - seat
+      summary: Delete seat
+      description: API cho admin xóa ghế theo ID
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID của ghế cần xoá
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ghế được xoá thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Yêu cầu không hợp lệ
+        '500':
+          description: Lỗi server
+
+#API THEATER
+  /theaters:
+    get:
+      summary: Get all theaters
+      tags:
+        - theater
+      responses:
+        '200':
+          description: Successfully retrieved all theaters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theater'
+
+    post:
+      summary: Add a new theater
+      tags:
+        - theater
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Theater'
+      responses:
+        '201':
+          description: Theater added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theater'
+        '400':
+          description: Brand not fount
+        '500': 
+          description: Internal Server Error          
+
+  /theaters/{id}:
+    put:
+      summary: Update theater details
+      tags:
+        - theater
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Theater'
+      responses:
+        '200':
+          description: Theater updated successfully
+
+    delete:
+      summary: Delete a theater
+      tags:
+        - theater
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Theater deleted successfully
+
+  /theaters/{id}/rooms:
+    get:
+      summary: Get rooms by theater ID
+      tags:
+        - theater
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved rooms
+          
+#API ROOM
+  /rooms/{theaterName}:
+    get:
+      tags:
+        - room
+      summary: Get rooms by theater name
+      description: Lấy danh sách phòng chiếu theo tên rạp
+      parameters:
+        - name: theaterName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Tên rạp chiếu phim
+      responses:
+        '200':
+          description: Danh sách phòng chiếu
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RoomDto'
+        '500':
+          description: Lỗi server
+
+  /rooms:
+    post:
+      tags:
+        - room
+      summary: Add new room
+      description: Admin thêm phòng mới
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomDto'
+      responses:
+        '200':
+          description: Thêm phòng thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDto'
+        '400':
+          description: Request không hợp lệ
+        '500':
+          description: Lỗi server
+
+  /rooms/{id}:
+    put:
+      tags:
+        - room
+      summary: Update room
+      description: Admin cập nhật thông tin phòng
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID của phòng
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoomDto'
+      responses:
+        '200':
+          description: Cập nhật phòng thành công
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoomDto'
+        '400':
+          description: Request không hợp lệ
+        '500':
+          description: Lỗi server
+
+    delete:
+      tags:
+        - room
+      summary: Delete room
+      description: Admin xóa phòng theo ID
+      security:
+        - bearerAuth: []
+      x-roles:
+        - admin
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID của phòng
+      responses:
+        '200':
+          description: Xoá phòng thành công
+        '400':
+          description: Request không hợp lệ
+        '500':
+          description: Lỗi server
+
+#API PAYMENT
+  /payment/create-session:
+    post: 
+        tags:
+          - payment
+        summary: Create session
+        description: Create session for payment
+        security:
+          - bearerAuth: []
+        x-roles:
+          - admin
+          - user
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentRequest'
+        responses:
+          '200':
+            description: Create session successfully
+          '400':
+            description: Invalid request body
+          '500':
+            description: Internal server error
+  
+  /payment/webhook:
+    post:
+      tags:
+        - payment
+      summary: Handle Stripe webhook
+      description: Receive and process Stripe webhook events (e.g., session completed, payment success).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Payload từ Stripe webhook (không có cấu trúc cố định, tùy theo sự kiện).
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Invalid signature or bad request
+        '500':
+          description: Error processing webhook
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone: 
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        gender: 
+          type: string
+          enum: [Nam, Nữ, Khác]
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+      required:
+        - name
+        - email
+        - phone
+        - dateOfBirth
+        - gender
+        - username
+        - password
+        - role
+
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    UserProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone: 
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        gender: 
+          type: string  
+          enum: [Nam, Nữ, Khác]
+        avatar:
+          type: string
+          nullable: true
+      required:
+        - name
+        - email
+        - phone
+        - dateOfBirth
+        - gender
+        - avatar
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone: 
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        gender: 
+          type: string
+        
+    Coupon:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Coupon code
+        discount:
+          type: number
+          description: Discount percentage
+        expires_at:
+          type: string
+          format: date-time
+          description: Expiration date of the coupon
+      required:
+        - code
+        - discount
+        - expires_at
+
+    BookingRequest:
+      type: object
+      required:
+        - tickets
+      properties:
+        tickets:
+          type: array
+          items:
+            type: object
+            required:
+              - seatId
+              - showtimeId
+              - price
+            properties:
+              seatId:
+                type: integer
+                example: 25
+              showtimeId:
+                type: integer
+                example: 2
+              price:
+                type: number
+                format: float
+                example: 70000
+        foodBookings:
+          type: array
+          items:
+            type: object
+            required:
+              - foodId
+              - quantity
+            properties:
+              foodId:
+                type: integer
+                example: 1
+              quantity:
+                type: integer
+                example: 2
+
+    BookingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        paymentStatus:
+          type: string
+        tickets:
+          type: array
+          items:
+            $ref: '#/components/schemas/TicketResponse'
+        foodBookings:
+          type: array
+          items:
+            $ref: '#/components/schemas/FoodBookingResponse'
+        total:
+          type: number
+          format: float
+
+    TicketResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        seatName:
+          type: string
+        showtime:
+          $ref: '#/components/schemas/ShowtimeSummary'
+        price:
+          type: number
+          format: float
+
+    ShowtimeSummary:
+      type: object
+      properties:
+        movieTitle:
+          type: string
+        roomName:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          format: time
+        language:
+          type: string
+
+    FoodBookingResponse:
+      type: object
+      properties:
+        food:
+          $ref: '#/components/schemas/Food'
+        quantity:
+          type: integer
+
+    Food:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        detail:
+          type: string
+        img:
+          type: string
+          format: uri
+        category:
+          type: string
+
+    FoodResponse:
+      type: object
+      properties:
+        category:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+          format: float
+        detail:
+          type: string
+        img:
+          type: string
+    Movie:
+      type: object
+      properties:
+        id:
+          type: number
+          format: int
+        title:
+          type: string
+        releaseDate:
+          type: string
+          format: date
+        duration:
+          type: number
+        gerne:
+          type: string
+        limitAge:
+          type: number
+        poster:
+          type: string
+        rating:
+          type: number
+        filmDirector:
+          type: string
+        descriptionMovie:
+          type: string
+        castMovie:
+          type: string
+        vidUrl:
+          type: string
+      required:
+        - title
+        - descriptionMovie
+        - duration 
+        - genre 
+        - rating
+        - limitAge 
+        - poster
+        - releaseDate
+        - cast
+        - filmDirector
+        - vidUrl
+
+    MovieRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        releaseDate:
+          type: string
+          format: date
+        duration:
+          type: number
+        gerne:
+          type: string
+        limitAge:
+          type: number
+        poster:
+          type: string
+        rating:
+          type: number
+        filmDirector:
+          type: string
+        descriptionMovie:
+          type: string
+        castMovie:
+          type: string
+        vidUrl:
+          type: string
+      required:
+        - title
+        - releaseDate
+        - duration
+        - gerne
+        - limitAge
+        - poster
+        - rating
+        - filmDirector
+        - descriptionMovie
+        - castMovie
+        - vidUrl
+
+    ShowtimeDto:
+      type: object
+      properties:
+        movieTitle:
+          type: string
+        roomName:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          format: time
+        language:
+          type: string
+      required:
+        - movieTitle
+
+    ShowtimeRequestDto:
+      type: object
+      properties:
+        movieId:
+          type: integer
+        moviTitle:
+          type: string
+        roomId:
+          type: integer
+        roomName:
+          type: string
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+          format: time
+        language:
+          type: string
+      required:
+        - movieId
+        - roomId
+        - date
+        - time
+        - language
+
+    SeatDto:
+      type: object
+      properties:
+        roomId:
+          type: integer
+        roomName:
+          type: string
+        row:
+          type: string
+        number:
+          type: integer
+        status:
+          type: string
+          enum: [available,selected,booked]
+        price:
+          type: number
+      required:
+        - roomId
+        - row
+        - number
+        - status
+        - price
+
+
+    Theater:
+      type: object
+      properties:
+        brand_id:
+          type: number
+        brand:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+      required:
+        - brand_id
+        - name
+        - location
+        
+    PaymentRequest:
+      type: object
+      properties:
+        bookingId: 
+          type: number
+        couponCode:
+          type: string
+      required:
+        - bookingId
+        
+    RoomDto:
+      type: object
+      properties:
+        theaterId:
+          type: integer
+        theaterName:
+          type: string
+        roomName:
+          type: string
+        capacity:
+          type: integer
+      required:
+        - theaterId
+        - roomName
+        - capacity
+        
+    TicketRequest:
+      type: object
+      properties:
+        accountId:
+          type: string
+        showtime_id:
+          type: string
+        seat_id:
+          type: string
+      required:
+        - accountId
+        - showtime_id
+        - seat_id
