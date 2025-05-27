@@ -76,6 +76,13 @@ public class MovieService {
 
     }
 
+    public List<MovieDto> findMoviesByTitle(String title) {
+        List<Movie> movies = movieRepository.findByTitleContainingIgnoreCase(title);
+        return movies.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private MovieDto convertToDto(Movie movie) {
         return new MovieDto(
                 movie.getId(),
