@@ -27,7 +27,7 @@ public class ShowtimeController {
     }
 
     // Tìm suất chiếu theo tên phim
-    @GetMapping("/title/{title}")
+    @GetMapping("/{title}")
     public List<ShowtimeResponseDto> getShowtimeByMovieTitle(@PathVariable String title) {
         return showtimeService.getShowtimeByMovieTitle(title);
     }

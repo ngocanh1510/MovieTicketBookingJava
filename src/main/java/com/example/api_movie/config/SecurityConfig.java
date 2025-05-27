@@ -76,6 +76,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/payment/webhook").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/stripe/webhook").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/coupons/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger.yaml",
+                                "/openapi/**"
+                        ).permitAll()
 
                         .anyRequest().authenticated()
                 )
